@@ -1,0 +1,57 @@
+ import subprocess
+import re
+import matplotlib.pyplot as plt
+
+# Tamanhos de matriz a serem testados
+tams = [200, 400, 600, 800, 1000]
+
+# Função para medir o tempo médio de execução
+def obter_tempo(prog):
+    tempos = [5]
+    for _ in range(5):
+        res = subprocess.run(prog, capture_output=True, text=True, shell=True)
+        match = re.search(r"Tempo gasto em milissegundos: (\d+)", res.stdout.strip())
+        if match:
+            tempos.append(float(match.group(1)))
+        else:
+            print(f"Erro ao capturar tempo: {res.stdout}")
+            return None
+    return sum(tempos) / len(tempos)
+
+# Listas para armazenar os tempos de execução dos programas
+tempos1, tempos2 = [1.996, 3.988, 6.978, 15.957, 20.969], [2.237, 5.990, 12.968, 17.702, 29.917]
+
+# Testando para cada valor de TAM
+for tam in tams:
+    print(f"Testando para TAM = {tam}...")
+
+    # Compilação e execução do Programa 1
+    if subprocess.run(f"gcc -o prog1 1.c -DTAM={tam}", shell=True).returncode == 0:
+        tempos1.append(obter_tempo("./prog1") or float("nan"))
+    else:
+        print("Erro na compilação do Programa 1")
+        tempos1.append(float("nan"))
+
+    # Compilação e execução do Programa 2
+    if subprocess.run(f"gcc -o prog2 2.c -DTAM={tam}", shell=True).returncode == 0:
+        tempos2.append(obter_tempo("./prog2") or float("nan"))
+    else:
+        print("Erro na compilação do Programa 2")
+        tempos2.append(float("nan"))
+
+# Exibindo os resultados
+print("\nTAM | Programa 1 (ms) | Programa 2 (ms)")
+for t, t1, t2 in zip(tams, tempos1, tempos2):
+    print(f"{t:<5} | {t1:<17} | {t2}")
+
+# Gerando gráfico
+plt.figure(figsize=(8, 6))
+plt.plot(tams, tempos1, label="Programa 1 (Linhas)", marker="o")
+plt.plot(tams, tempos2, label="Programa 2 (Colunas)", marker="s")
+plt.xlabel("Tamanho da Matriz (TAM)")
+plt.ylabel("Tempo (ms)")
+plt.title("Desempenho: Acesso por Linhas vs. Colunas")
+plt.legend()
+plt.grid(True)
+plt.savefig('grafico_desempenho.png')
+plt.show()
