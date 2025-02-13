@@ -1,0 +1,24 @@
+ import matplotlib.pyplot as plt
+
+# Novos valores de TAM e tempos de execução
+tam_values = [200, 400, 600, 800, 1000]
+tempos_programa1 = [1.996, 3.988, 6.978, 15.957, 20.969]
+tempos_programa2 = [2.237, 5.990, 12.968, 17.702, 29.917]
+
+# Exibir os resultados em uma tabela
+print("\nResultados:")
+print("TAM\tPrograma 1 (ms)\tPrograma 2 (ms)")
+for i, tam in enumerate(tam_values):
+    print(f"{tam}\t{tempos_programa1[i]:.3f}\t\t{tempos_programa2[i]:.3f}")
+
+# Gerar gráfico
+plt.figure(figsize=(8, 6))
+plt.plot(tam_values, tempos_programa1, label="Programa 1 (Acesso por Linhas)", marker="o")
+plt.plot(tam_values, tempos_programa2, label="Programa 2 (Acesso por Colunas)", marker="s")
+plt.xlabel("Tamanho da Matriz (TAM)")
+plt.ylabel("Tempo de Execução (ms)")
+plt.title("Comparação de Desempenho entre Acesso por Linhas e Colunas")
+plt.legend()
+plt.grid(True)
+plt.savefig("grafico_desempenho.png")  # Salvar o gráfico em um arquivo
+plt.show()
